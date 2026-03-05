@@ -1,0 +1,4 @@
+Flask
+flask-cors
+arabic-reshaper
+python-bidi

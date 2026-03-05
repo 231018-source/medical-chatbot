@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Medical Chatbot</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f7fb;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.chat-container{
+width:420px;
+height:600px;
+background:white;
+border-radius:10px;
+box-shadow:0 0 15px rgba(0,0,0,0.1);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+.header{
+background:#2b7cff;
+color:white;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:16px;
+}
+
+.buttons{
+display:flex;
+gap:5px;
+}
+
+.clear-btn{
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+font-size:12px;
+}
+
+.reset-btn{
+background:#00b894;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
+cursor:pointer;
+font-size:12px;
+}
+
+.chat-box{
+flex:1;
+padding:15px;
+overflow-y:auto;
+background:#f9f9f9;
+}
+
+.message{
+margin:10px 0;
+max-width:75%;
+padding:10px 15px;
+border-radius:15px;
+font-size:14px;
+line-height:1.5;
+}
+
+.user{
+background:#2b7cff;
+color:white;
+margin-left:auto;
+}
+
+.bot{
+background:#e4e6eb;
+color:black;
+margin-right:auto;
+}
+
+.input-area{
+display:flex;
+border-top:1px solid #ddd;
+}
+
+.input-area input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+font-size:14px;
+}
+
+.input-area button{
+background:#2b7cff;
+color:white;
+border:none;
+padding:10px 15px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<div class="header">
+
+🤖 Medical Chatbot
+
+<div class="buttons">
+<button class="reset-btn" onclick="restartBot()">🔄 إعادة تشغيل</button>
+<button class="clear-btn" onclick="clearChat()">🗑 حذف</button>
+</div>
+
+</div>
+
+<div id="chat" class="chat-box"></div>
+
+<div class="input-area">
+<input id="msg" placeholder="اكتب سؤالك الطبي...">
+<button onclick="sendMessage()">إرسال</button>
+</div>
+
+</div>
+
+<script>
+
+function addBotMessage(text){
+
+let chat=document.getElementById("chat");
+
+chat.innerHTML+=`<div class="message bot">${text}</div>`;
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+function clearChat(){
+
+document.getElementById("chat").innerHTML="";
+
+}
+
+function restartBot(){
+
+clearChat();
+
+addBotMessage("مرحبا! أنا البوت الطبي. كيف يمكنني مساعدتك؟");
+
+}
+
+async function sendMessage(){
+
+let input=document.getElementById("msg");
+let message=input.value;
+
+if(message.trim()=="") return;
+
+let chat=document.getElementById("chat");
+
+chat.innerHTML+=`<div class="message user">${message}</div>`;
+
+let response=await fetch("http://127.0.0.1:5000/chat",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+message:message
+})
+
+});
+
+let data=await response.json();
+
+chat.innerHTML+=`<div class="message bot">${data.reply}</div>`;
+
+chat.scrollTop=chat.scrollHeight;
+
+input.value="";
+
+}
+
+document.getElementById("msg").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+sendMessage();
+}
+
+});
+
+window.onload=function(){
+
+restartBot();
+
+}
+
+</script>
+
+</body>
+
+</html>

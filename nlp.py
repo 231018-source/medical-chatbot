@@ -1,23 +1,16 @@
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 import re
+import os
 
 app = Flask(__name__)
+CORS(app)
 
+# عرض صفحة الموقع
 @app.route("/")
 def home():
     return send_from_directory(".", "index.html")
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_message = request.json["message"]
-    reply = "هذا رد تجريبي"
-    return jsonify({"reply": reply})
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import re
-
-app = Flask(__name__)
-CORS(app)
 
 patterns = {
 
@@ -33,6 +26,7 @@ patterns = {
 
     "Emergency": re.compile(r"(لا أستطيع التنفس|ألم شديد في الصدر|نزيف حاد)")
 }
+
 
 responses = {
 
@@ -53,20 +47,14 @@ responses = {
 
 
 def detect_intent(user_input):
-
     for intent, pattern in patterns.items():
-
         if pattern.search(user_input):
-
             return intent
-
     return "Unknown"
 
 
 def get_bot_reply(user_input):
-
     intent = detect_intent(user_input)
-
     return responses.get(intent, responses["Unknown"])
 
 
@@ -74,7 +62,6 @@ def get_bot_reply(user_input):
 def chat():
 
     data = request.get_json()
-
     user_message = data["message"]
 
     reply = get_bot_reply(user_message)
@@ -86,8 +73,5 @@ def chat():
 
 if __name__ == "__main__":
 
- import os
-
-port = int(os.environ.get("PORT", 10000))
-app.run(host="0.0.0.0", port=port)
-
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)

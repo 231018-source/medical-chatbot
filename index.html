@@ -143,6 +143,9 @@ cursor:pointer;
 
 <script>
 
+/* ضع رابط Render هنا */
+const API_URL="https://medical-chatbot.onrender.com/chat";
+
 function addBotMessage(text){
 
 let chat=document.getElementById("chat");
@@ -154,17 +157,12 @@ chat.scrollTop=chat.scrollHeight;
 }
 
 function clearChat(){
-
 document.getElementById("chat").innerHTML="";
-
 }
 
 function restartBot(){
-
 clearChat();
-
 addBotMessage("مرحبا! أنا البوت الطبي. كيف يمكنني مساعدتك؟");
-
 }
 
 async function sendMessage(){
@@ -178,7 +176,9 @@ let chat=document.getElementById("chat");
 
 chat.innerHTML+=`<div class="message user">${message}</div>`;
 
-let response=await fetch("http://127.0.0.1:5000/chat",{
+try{
+
+let response=await fetch(API_URL,{
 
 method:"POST",
 
@@ -196,6 +196,13 @@ let data=await response.json();
 
 chat.innerHTML+=`<div class="message bot">${data.reply}</div>`;
 
+}
+catch(error){
+
+chat.innerHTML+=`<div class="message bot">⚠️ تعذر الاتصال بالخادم</div>`;
+
+}
+
 chat.scrollTop=chat.scrollHeight;
 
 input.value="";
@@ -203,21 +210,22 @@ input.value="";
 }
 
 document.getElementById("msg").addEventListener("keypress",function(e){
-
 if(e.key==="Enter"){
 sendMessage();
 }
-
 });
 
 window.onload=function(){
-
 restartBot();
-
 }
 
 </script>
 
 </body>
+
+</html>
+
+</body>
+
 
 </html>

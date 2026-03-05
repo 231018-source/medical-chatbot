@@ -1,3 +1,17 @@
+from flask import Flask, request, jsonify, send_from_directory
+import re
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return send_from_directory(".", "index.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_message = request.json["message"]
+    reply = "هذا رد تجريبي"
+    return jsonify({"reply": reply})
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import re
@@ -76,3 +90,4 @@ if __name__ == "__main__":
 
 port = int(os.environ.get("PORT", 10000))
 app.run(host="0.0.0.0", port=port)
+
